@@ -2,13 +2,6 @@
 open Stdio
 open Base
 
-let rec print_list = function
-  | [] -> ()
-  | e :: l ->
-      printf "%d" e;
-      printf " ";
-      print_list l
-
 module Day1 = struct
   let is2020 (x : int) (xs : int list) : int =
     let filtered =
