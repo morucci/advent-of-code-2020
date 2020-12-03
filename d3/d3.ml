@@ -14,10 +14,6 @@ module Day3 = struct
 
   let tree = '#'
 
-  (* let rslop = 3
-
-  let dslop = 1 *)
-
   let explode s = List.init end_offset ~f:(String.get s)
 
   let on_tree offset line : bool =
@@ -46,6 +42,7 @@ module Day3 = struct
   let part1 input =
     let _, count, _ = traverse input 3 1 in
     printf "Result part 1: %d\n " count
+
   let part2 input =
     let _, c1, _ = traverse input 1 1 in
     let _, c2, _ = traverse input 3 1 in
@@ -55,6 +52,6 @@ module Day3 = struct
     printf "Result part 2: %d\n " (c1 * c2 * c3 * c4 * c5)
 end
 
-let () = 
+let () =
   Day3.part1 "./input";
   Day3.part2 "./input"
