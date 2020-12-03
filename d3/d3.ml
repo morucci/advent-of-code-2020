@@ -14,7 +14,9 @@ module Day3 = struct
 
   let tree = '#'
 
-  let slop = 3
+  (* let rslop = 3
+
+  let dslop = 1 *)
 
   let explode s = List.init end_offset ~f:(String.get s)
 
@@ -24,17 +26,35 @@ module Day3 = struct
     let c = List.nth_exn cl offset in
     Char.( = ) c tree
 
-  let count_offset old = (old + slop) % end_offset
+  let count_offset old rslop = (old + rslop) % end_offset
 
-  let test_line (offset, count) line =
+  let test_line rslop dslop (offset, count, linen) line =
     (* printf "Offset: %d, count %d " offset count; *)
-    let new_offset = count_offset offset in
-    if on_tree offset line then (new_offset, count + 1) else (new_offset, count)
+    match linen % dslop with
+    | 1 -> (offset, count, linen + 1)
+    | 0 ->
+        let new_offset = count_offset offset rslop in
+        if on_tree offset line then (new_offset, count + 1, linen + 1)
+        else (new_offset, count, linen + 1)
+    | _ -> (0, 0, 0)
+
+  let traverse input rslop dslop =
+    let test_line' = test_line rslop dslop in
+    let lines = read input in
+    List.fold ~init:(start_offset, 0, 0) ~f:test_line' lines
 
   let part1 input =
-    let lines = read input in
-    let _, count = List.fold ~init:(start_offset, 0) ~f:test_line lines in
-    printf "Result: %d\n " count
+    let _, count, _ = traverse input 3 1 in
+    printf "Result part 1: %d\n " count
+  let part2 input =
+    let _, c1, _ = traverse input 1 1 in
+    let _, c2, _ = traverse input 3 1 in
+    let _, c3, _ = traverse input 5 1 in
+    let _, c4, _ = traverse input 7 1 in
+    let _, c5, _ = traverse input 1 2 in
+    printf "Result part 2: %d\n " (c1 * c2 * c3 * c4 * c5)
 end
 
-let () = Day3.part1 "./input"
+let () = 
+  Day3.part1 "./input";
+  Day3.part2 "./input"
