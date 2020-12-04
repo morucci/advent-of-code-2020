@@ -1,0 +1,3 @@
+(executable
+ (name      d4)
+ (libraries base core))
