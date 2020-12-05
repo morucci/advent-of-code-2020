@@ -5,6 +5,8 @@ let print_list (a : string list) = printf "%s\n" (String.concat a ~sep:" ")
 
 let read file = In_channel.read_lines file
 
+let range a b = List.init (b - a) ~f:(( + ) a)
+
 module Day4 = struct
   type seat = { col : string; row : string }
 
@@ -17,7 +19,7 @@ module Day4 = struct
     String.foldi ~init:0 (String.rev s) ~f:(fun i acc c ->
         acc + (int_of_string (Char.to_string c) * pow 2 i))
 
-  let process_line acc line =
+  let process_line line =
     let to_bin =
       String.fold ~init:{ col = ""; row = "" }
         ~f:(fun acc c ->
@@ -29,22 +31,37 @@ module Day4 = struct
           | _ as inv -> raise (Invalid_argument (Char.escaped inv)))
         line
     in
-    printf "%s\n" line;
-    printf "row: %s, col: %s \n" to_bin.row to_bin.col;
-    printf "row: %d, col: %d \n"
-      (bitstring_to_int to_bin.row)
-      (bitstring_to_int to_bin.col);
-    let ret = (bitstring_to_int to_bin.row * 8) + bitstring_to_int to_bin.col in
-    printf "Seat ID: %d\n" ret;
-    if ret > acc then ret else acc
+    (bitstring_to_int to_bin.row * 8) + bitstring_to_int to_bin.col
+
+  let get_max li =
+    List.fold ~init:0 ~f:(fun acc i -> if i > acc then i else acc) li
 
   let traverse input =
     let lines = read input in
-    List.fold ~init:0 ~f:process_line lines
+    List.map ~f:process_line lines
 
   let part1 input =
-    let count = traverse input in
-    printf "Result part 1: %d\n " count
+    let seats = traverse input in
+    let sid = get_max seats in
+    printf "Result part 1: %d\n " sid
+
+  let part2 input =
+    let seats = traverse input in
+    let maxid = get_max seats in
+    let minid = 0 in
+    let is_in id l = List.mem ~equal:( = ) l id in
+    let sid =
+      List.hd_exn
+        (List.filter
+           ~f:(fun id ->
+             (not (is_in id seats))
+             && is_in (id - 1) seats
+             && is_in (id + 1) seats)
+           (range minid maxid))
+    in
+
+    printf "Result part 2: %d\n " sid
 end
 
 let () = Day4.part1 "./input"
+let () = Day4.part2 "./input"
