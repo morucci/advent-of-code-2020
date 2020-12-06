@@ -26,13 +26,11 @@ module Day6 = struct
         | rp :: rest -> (line :: rp) :: rest )
 
   let part1 input =
-    let lines = In_channel.read_lines input in
-    let acc = List.fold ~init:[ [] ] ~f:process_line lines in
-    let z = List.map ~f:String.concat acc in
-    let y = List.map ~f:keep_uniq_letter z in
-    let r = List.map ~f:List.length y in
-    let t = List.fold ~init:0 ~f:( + ) r in
-    printf "Result: %d\n" t
+    List.fold ~init:[ [] ] ~f:process_line (In_channel.read_lines input)
+    |> List.map ~f:String.concat
+    |> List.map ~f:keep_uniq_letter
+    |> List.map ~f:List.length |> List.fold ~init:0 ~f:( + )
+    |> printf "Result: %d\n"
 end
 
 let () = Day6.part1 "./input"
